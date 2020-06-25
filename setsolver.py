@@ -2,7 +2,7 @@
 
 import argparse
 
-VERSION = 1.1
+VERSION = "1.2"
 
 def permutate(num_list):
     permutations = []
@@ -51,20 +51,24 @@ def orderOperations(equation):
                    amble_len = len(amble)
                    post_len = len(postamble)
 
+                   subambles = []
+                   close_op = []
+                   subposts = []
+
                    if amble_len > 3 and amble_len < len(equation):
                        subambles = orderOperations(amble)
+                   else:
+                       subambles = [amble]
 
-                       if post_len >= 5:
-                           close_op = postamble[:2]
-                           subposts = orderOperations(postamble[2:])
-                           for sa in subambles:
-                               for sp in subposts:
-                                   ordered_equations.append(preamble + sa + close_op + sp)
-                       else: 
-                           for sa in subambles:
-                               ordered_equations.append(preamble + sa + postamble)
-                   else:  
-                       ordered_equations.append(close_copy)
+                   if post_len >= 5:
+                       close_op = postamble[:2]
+                       subposts = orderOperations(postamble[2:])
+                   else:
+                       subposts = [postamble]
+
+                   for sa in subambles:
+                       for sp in subposts:
+                           ordered_equations.append(preamble + sa + close_op + sp)
     return ordered_equations
 
 if __name__ == "__main__":
