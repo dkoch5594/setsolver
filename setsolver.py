@@ -2,6 +2,8 @@
 
 import argparse
 
+VERSION = 1.1
+
 def permutate(num_list):
     permutations = []
     
@@ -41,13 +43,26 @@ def orderOperations(equation):
                if isinstance(open_copy[c],float):
                    close_copy = open_copy.copy()
                    close_copy.insert(c+1,")")
-                   ordered_len = len(close_copy[o+1:c+1])
-                   if ordered_len > 3 and ordered_len < len(equation):
-                       prelude = close_copy[:o+1]
-                       postlude = close_copy[c+1:]
-                       suborders = orderOperations(close_copy[o+1:c+1])
-                       for s in suborders:
-                           ordered_equations.append(prelude + s + postlude)
+                   
+                   preamble = close_copy[:o+1]
+                   amble = close_copy[o+1:c+1]
+                   postamble = close_copy[c+1:]
+
+                   amble_len = len(amble)
+                   post_len = len(postamble)
+
+                   if amble_len > 3 and amble_len < len(equation):
+                       subambles = orderOperations(amble)
+
+                       if post_len >= 5:
+                           close_op = postamble[:2]
+                           subposts = orderOperations(postamble[2:])
+                           for sa in subambles:
+                               for sp in subposts:
+                                   ordered_equations.append(preamble + sa + close_op + sp)
+                       else: 
+                           for sa in subambles:
+                               ordered_equations.append(preamble + sa + postamble)
                    else:  
                        ordered_equations.append(close_copy)
     return ordered_equations
@@ -56,7 +71,7 @@ if __name__ == "__main__":
 
     # Add some arguments
     parser = argparse.ArgumentParser(description="Find an equation over a list of numbers that evaluates to a given answer.")
-    parser.add_argument("--version", "-V", action="version", version="%(prog)s 1.0")
+    parser.add_argument("--version", "-V", action="version", version="%(prog)s {}".format(VERSION))
     parser.add_argument("numbers", nargs="+", metavar="N", type=float, help="List of numbers to base use in equation")
     parser.add_argument("--answer", "-a", "-A", metavar="ANSWER", type=float, required=True, help="Desired answer to equation")
 
